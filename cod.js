@@ -41,22 +41,7 @@ var setBXSliders = function () {
             };
 
             //Проверяем помещаются ли элементы по ширине секции, или надо иницировать слайдер
-            //return slider if width small, or null
-            var InitSliderIfWidthCheck_new = function(section){
-                var card_items = section.querySelectorAll('.slider-cart-item');
-                var card_wrapper_width = section.querySelector('.section-wrap').width.replace(/px/g,"");
-                var card_items_width = card_items[0].style.width.replace(/px/g,"") * card_items.length - (card_items[0].style.marginLeft.replace(/px/g,"")*2);
-                var slider = null;
-
-                if(card_wrapper_width <= card_items_width) {
-                    section.querySelector('.slider-left').style.display = 'block';
-                    section.querySelector('.slider-right').style.display = 'block';
-                    slider = setBXSliderElem(section.querySelector('.slider-card-wrapper'));
-                    setSliderWrapperWidth(section);
-                }
-
-                return slider;
-            };
+            //return slider if width small, or null            
             var InitSliderIfWidthCheck = function(section){
                 var elem_item = section.find('.slider-cart-item:first-child');
                 var elem_wrapper_width = section.find('.section-wrap').width();
