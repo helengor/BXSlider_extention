@@ -2,28 +2,28 @@ var setBXSliders = function () {
 
             // слайдер
 
-            var setBXSliderElem = function (elem) {
-                var section = elem.parents('section');
-                var elem_wrapper = elem.parents('.slider-card-wrapper');
-                var slider_width = elem.find('.slider-cart-item').width();
-                var slider_margin = elem.find('.slider-cart-item:first-child').outerWidth(true) - elem.find('.slider-cart-item:first-child').outerWidth();
+            var setBXSliderElem = function (slider_card) {
+                var slider_wrapper = slider_card.parents('.slider-card-wrapper');
+                var slider_item = slider_card.find('.slider-cart-item:first-child');
+                var slider_item_width = slider_item.width();
+                var slider_margin = slider_item.outerWidth(true) - slider_item.outerWidth();
 
-                var slider = elem.bxSlider({
+                var slider = slider_card.bxSlider({
                     minSlides: 1,
                     maxSlides: 10,
                     controls: false,
-                    slideWidth: slider_width,
+                    slideWidth: slider_item_width,
                     slideMargin: slider_margin,
-                    responsive: elem.hasClass('responsive_cart'),
+                    responsive: slider_card.hasClass('responsive_cart'),
                     moveSlides: 1,
                     pager: false
                 });
 
-                elem_wrapper.find('.slider-left').click(function () {
+                slider_wrapper.find('.slider-left').click(function () {
                     slider.goToPrevSlide();
                 });
 
-                elem_wrapper.find('.slider-right').click(function () {
+                slider_wrapper.find('.slider-right').click(function () {
                     slider.goToNextSlide();
                 });
 
@@ -31,45 +31,43 @@ var setBXSliders = function () {
             };
 
             // Установка правильной ширины области слайдера, чтобы не было видно обрезанных карточек
-            var setSliderWrapperWidth = function (elem) {
-                var elem_wrapper = elem.find('.slider-card-wrapper');
-                var elem_item = elem.find('.slider-cart-item:first-child');
-                var cart_wrapper = Math.floor(elem.width() / elem_item.outerWidth(true)) * elem_item.outerWidth(true) - (elem_item.outerWidth(true) - elem_item.outerWidth());
+            var setSliderWrapperWidth = function (block_wrapper) {
+                var slider_wrapper = block_wrapper.find('.slider-card-wrapper');
+                var slider_item = block_wrapper.find('.slider-cart-item:first-child');
+                var cart_wrapper = Math.floor(block_wrapper.width() / slider_item.outerWidth(true)) * slider_item.outerWidth(true) - (slider_item.outerWidth(true) - slider_item.outerWidth());
 
-                elem_wrapper.width(cart_wrapper);
-                elem_wrapper.css('max-width', elem.find('.bx-wrapper').css('max-width'));
+                slider_wrapper.width(cart_wrapper);
+                slider_wrapper.css('max-width', block_wrapper.find('.bx-wrapper').css('max-width'));
             };
 
-            //Проверяем помещаются ли элементы по ширине секции, или надо иницировать слайдер
-            //return slider if width small, or null            
-            var InitSliderIfWidthCheck = function(section){
-                var elem_item = section.find('.slider-cart-item:first-child');
-                var elem_wrapper_width = section.find('.section-wrap').width();
-                var elem_items_width = elem_item.outerWidth(true) * section.find('.slider-cart-item').length - (elem_item.outerWidth(true) - elem_item.outerWidth());
-                var slider = null;
 
-                if(elem_wrapper_width <= elem_items_width) {
-                    section.find('.slider-left').css('display', 'block');
-                    section.find('.slider-right').css('display', 'block');
-                    slider = setBXSliderElem(section.find('.slider-card'));
-                    setSliderWrapperWidth(section);
+            var InitSliderIfWidthCheck = function(block_wrapper){
+                var slider = null;
+                var block_wrapper_width = block_wrapper.width();
+                var slider_item = block_wrapper.find('.slider-cart-item:first-child');
+                var slider_items_width = slider_item.outerWidth(true) * block_wrapper.find('.slider-cart-item').length - (slider_item.outerWidth(true) - slider_item.outerWidth());
+
+                if(block_wrapper_width <= slider_items_width) {
+                    block_wrapper.find('.slider-left').css('display', 'block');
+                    block_wrapper.find('.slider-right').css('display', 'block');
+                    slider = setBXSliderElem(block_wrapper.find('.slider-card'));
+                    setSliderWrapperWidth(block_wrapper);
                 }
 
                 return slider;
             };
 
             $('.slider-card').each(function () {
-                var section = $(this).parents('section');
-                var slider = InitSliderIfWidthCheck(section);
+                var block_wrapper = $(this).parents('.block_wrapper');
+                var slider = InitSliderIfWidthCheck(block_wrapper);
 
-                //Переопределяем слайдер при ресайзе
                 $(window).resize(function () {
                     if(slider !== null){
                         slider.destroySlider();
-                        section.find('.slider-card-wrapper').css('max-width', 'none').css('width','auto');
-                        section.find('.slider-left, .slider-right').css('display', 'none').off();
+                        block_wrapper.find('.slider-card-wrapper').css('max-width', 'none').css('width','auto');
+                        block_wrapper.find('.slider-left, .slider-right').css('display', 'none').off();
                     }
-                    slider = InitSliderIfWidthCheck(section);
+                    slider = InitSliderIfWidthCheck(block_wrapper);
                 });
             });
         };
